@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hhjx.dao.CustomerDao">
+	
+    <!-- 条件分页查询总条数 -->
+	<select id="selectCustomerCount" parameterType="com.hhjx.entity.Page"
+		resultType="java.lang.Long">
+		SELECT count(0) FROM customer_data
+		<where>
+			<if test="keyWords != null and keyWords != ''">
+				<if test="fuzzy == true">
+					name like '%' #{keyWords} '%'
+				</if>
+				<if test="fuzzy == false">
+					name = #{keyWords}
+				</if>
+			</if>
+		</where>
+	</select>
+	
+	<select id="selectCustomerCountById" parameterType="com.hhjx.entity.Page"
+		resultType="java.lang.Long">
+		SELECT count(0) FROM customer_data
+		<where>
+		    userId=#{userId}
+			<if test="keyWords != null and keyWords != ''">
+				<if test="fuzzy == true">
+					AND name like '%' #{keyWords} '%'
+				</if>
+				<if test="fuzzy == false">
+					AND name = #{keyWords}
+				</if>
+			</if>
+		</where>
+	</select>
+	
+	<!-- 条件分页查询用户列表 -->
+	<select id="selectCustomerByPage" parameterType="com.hhjx.entity.Page"
+		resultType="CustomerData">
+		SELECT c.id,user.name as userName,c.code,c.name,c.type,c.contacts,c.phone,c.telephone,c.extendphone,
+       c.fax,c.email,c.qq,c.product,c.address,c.remark,c.intime FROM user right join  customer_data c 
+        on user.id=c.userId
+		<where>
+			<if test="keyWords != null and keyWords != ''">
+				<if test="fuzzy == true">
+					c.name like '%' #{keyWords} '%'
+				</if>
+				<if test="fuzzy == false">
+					c.name = #{keyWords}
+				</if>
+			</if>
+		</where>
+		<if test="order == 1">
+					order by intime desc
+		</if>
+		<if test="order == 0">
+					order by intime asc
+		</if>
+		 LIMIT ${(pageNum-1)*pageSize},#{pageSize}
+	</select>
+	
+	<select id="selectCustomerByPageById" parameterType="com.hhjx.entity.Page"
+		resultType="CustomerData">
+		SELECT * FROM customer_data
+		<where>
+		    userId=#{userId} 
+			<if test="keyWords != null and keyWords != ''">
+				<if test="fuzzy == true">
+					AND name like '%' #{keyWords} '%'
+				</if>
+				<if test="fuzzy == false">
+					AND name = #{keyWords}
+				</if>
+			</if>
+			
+		</where>
+		<if test="order == 1">
+					order by intime desc
+		</if>
+		<if test="order == 0">
+					order by intime asc
+		</if>
+		
+		 LIMIT ${(pageNum-1)*pageSize},#{pageSize}
+	</select>
+	
+	<select id="selectCustomer" parameterType="Integer" resultType="CustomerData">
+	select * from customer_data
+	where userId = #{id}
+	</select>
+	
+	<select id="selectCustomerIdByName" parameterType="String" resultType = "Integer">
+	select id from customer_data 
+	where name = #{name}
+	</select>
+	
+	<insert id="insertCustomer" parameterType="com.hhjx.entity.CustomerData">
+       INSERT INTO customer_data(userId,code,name,type,contacts,phone,telephone,extendphone,
+       fax,email,qq,product,address,remark,intime) 
+       values(#{userId},#{code},#{name},#{type},#{contacts},#{phone},#{telephone},#{extendphone},#{fax},#{email},#{qq},#{product},#{address},#{remark},#{intime})
+    </insert>
+    
+    <select id="findCustomer" parameterType="Integer" resultType="CustomerData">
+		SELECT * FROM customer_data WHERE id=#{id}
+	</select>
+	
+	<update id="updateCustomer" parameterType="com.hhjx.entity.CustomerData">
+		UPDATE customer_data 
+		<trim prefix="set" suffixOverrides=",">
+			<if test="code!=null">code=#{code},</if>
+			<if test="name!=null">name=#{name},</if>
+			<if test="type!=null">type=#{type},</if>
+			<if test="contacts!=null">contacts=#{contacts},</if>
+			<if test="phone!=null">phone=#{phone},</if>
+			<if test="telephone!=null">telephone=#{telephone},</if>
+			<if test="extendphone!=null">extendphone=#{extendphone},</if>
+			<if test="fax!=null">fax=#{fax},</if>
+			<if test="email!=null">email=#{email},</if>
+			<if test="qq!=null">qq=#{qq},</if>
+			<if test="product!=null">product=#{product},</if>
+			<if test="address!=null">address=#{address},</if>
+			<if test="remark!=null">remark=#{remark}</if>
+		</trim>
+		where id=#{id}
+	</update>
+	
+  <delete id="deleteCustomerById" parameterType="Integer">
+	    DELETE FROM customer_data WHERE
+		id=#{id}
+	</delete>
+</mapper>

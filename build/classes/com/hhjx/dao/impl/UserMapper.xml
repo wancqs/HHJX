@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hhjx.dao.UserDao">
+	<select id="findByUserName" parameterType="string" resultType="User">
+		SELECT * FROM user WHERE name=#{name}
+	</select>
+	
+	<select id="findUserById" parameterType="Integer" resultType="User">
+		SELECT * FROM user WHERE id=#{id}
+	</select>
+	
+	<select id="findByUserType" parameterType="string" resultType="User">
+		SELECT * FROM user WHERE type=#{type}
+	</select>
+
+	<!-- <update id="updateUser" parameterType="com.hhjx.entity.User"> UPDATE 
+		user SET password=#{password} WHERE id=#{id} </update> -->
+
+	<!-- 动态更新用户 -->
+	<update id="updateUser" parameterType="com.hhjx.entity.User">
+		UPDATE user
+		<trim prefix="set" suffixOverrides=",">
+			<if test="name!=null">name=#{name},</if>
+			<if test="password!=null">password=#{password},</if>
+			<if test="type!=null">type=#{type},</if>
+			<if test="email!=null">email=#{email}</if>
+		</trim>
+		where id=#{id}
+	</update>
+
+    <!-- 条件分页查询总条数 -->
+	<select id="selectCount" parameterType="com.hhjx.entity.Page"
+		resultType="java.lang.Long">
+		SELECT count(0) FROM user
+		<where>
+			<if test="keyWords != null and keyWords != ''">
+				<if test="fuzzy == true">
+					name like '%' #{keyWords} '%'
+				</if>
+				<if test="fuzzy == false">
+					name = #{keyWords}
+				</if>
+			</if>
+           and type=1
+		</where>
+	</select>
+	
+	<!-- 条件分页查询用户列表 -->
+	<select id="selectUserByPage" parameterType="com.hhjx.entity.Page"
+		resultType="User">
+		SELECT * FROM user
+		<where>
+			<if test="keyWords != null and keyWords != ''">
+				<if test="fuzzy == true">
+					name like '%' #{keyWords} '%'
+				</if>
+				<if test="fuzzy == false">
+					name = #{keyWords}
+				</if>
+			</if>
+		</where>
+		 LIMIT ${(pageNum-1)*pageSize},#{pageSize}
+	</select>
+    
+    <insert id="insertUser" parameterType="com.hhjx.entity.User">
+       INSERT INTO user(name,password,type,email) values(#{name},#{password},#{type},#{email})
+    </insert>
+  <!--   
+    <update id="updateUser" parameterType="com.hhjx.entity.User">
+       UPDATE user SET password=#{password} WHERE id=#{id}
+    </update> -->
+    <select id="selectUserNameByPrimaryKey" parameterType="Integer" resultType="User">
+		SELECT name FROM user WHERE id = #{id}
+	</select>
+	<delete id="deleteUserById" parameterType="Integer">
+	    DELETE FROM user WHERE
+		id=#{id}
+	</delete>
+</mapper>

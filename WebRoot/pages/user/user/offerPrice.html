@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>历史报价</title>
+
+</head>
+
+    <body ng-app="indexApp" ng-controller="offerPrice" class="gray-bg">
+
+<div class="middle-box text-center loginscreen animated fadeInDown">
+    <div style="margin-top: 0">
+        <h3>历史报价</h3>      
+    </div>
+</div>
+<!--列表开始-->
+	<div class="wrapper wrapper-content animated fadeInRight">
+		<div class="row well white-bg">
+			<div class="col-lg-12">
+				<div class="ibox float-e-margins">
+					<div class="row">
+					</div>
+
+					<button title="导出" class="btn btn-success btn-sm"
+						ng-click="downloadExl()">
+						导出
+					</button>
+					<button title="发送到邮箱" class="btn btn-success btn-sm"
+						ng-click="sendEmail()">
+						发送到邮箱
+					</button>
+					<a href="" download="历史报价.xlsx" id="hf"></a>
+					<button title="返回库存" class="btn btn-success btn-sm"
+						ng-click="toStock()">
+						返回库存
+					</button>
+					<div class="clearfix"></div>
+
+					<table class="table table-bordered table-hover my-table" 
+					style="word-break:break-all; word-wrap:break-all;table-layout:fixed">
+						<thead>
+							<tr>
+								<th width="120px">贸易商名称</th>
+								<th>型号</th>
+								<th>数量</th>
+								<th>品牌</th>
+								<th>年份</th>
+								<th>价格</th>
+								<th>工厂目标价</th>
+								<th>备注</th>
+								<th width="80px">业务员</th>
+								<th width="90px">录入时间</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr ng-repeat="item in customerPriceList">
+								<td ng-bind="item.customerName"></td>
+								<td ng-bind="item.description"></td>
+								<td ng-bind="item.quantity"></td>
+								<td ng-bind="item.brand"></td>
+								<td ng-bind="item.time"></td>
+								<td ng-bind="item.price"></td>
+								<td ng-bind="item.offer"></td>
+								<td ng-bind="item.remark"></td>
+								<td ng-bind="item.userName"></td>
+								<td ng-bind="item.intime"></td>
+							</tr>
+							<tr ng-show="customerPriceList.length==0">
+								<td class="text-center" colspan="12">没有记录</td>
+							</tr>
+						</tbody>
+					</table>
+					<div class="pull-left">
+						共<span ng-bind="customerPriceList.length"></span>条记录 
+					</div>
+					<div class="text-right">
+						
+					</div>
+
+				</div>
+
+			</div>
+		</div>
+
+	</div>
+
+	<!--列表结束-->
+
+  </body>
+</html>

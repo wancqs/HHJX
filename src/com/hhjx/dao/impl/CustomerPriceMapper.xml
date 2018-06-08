@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hhjx.dao.CustomerPriceDao">
+	
+    <!-- 条件分页查询总条数 -->
+	<select id="selectCustomerPriceCount" parameterType="com.hhjx.entity.Page"
+		resultType="java.lang.Long">
+		SELECT count(0) FROM customer_price
+		<where>
+			<if test="keyWords != null and keyWords != ''">
+				<if test="fuzzy == true">
+					customerName like '%' #{keyWords} '%'
+				</if>
+				<if test="fuzzy == false">
+					customerName = #{keyWords}
+				</if>
+			</if>
+		</where>
+	</select>
+	
+	<select id="selectCustomerPriceCountById" parameterType="com.hhjx.entity.Page"
+		resultType="java.lang.Long">
+		SELECT count(0) FROM customer_price
+		<where>
+		    userId=#{userId}
+			<if test="keyWords != null and keyWords != ''">
+				<if test="fuzzy == true">
+					AND customerName like '%' #{keyWords} '%'
+				</if>
+				<if test="fuzzy == false">
+					AND customerName = #{keyWords}
+				</if>
+			</if>
+		</where>
+	</select>
+	
+	<select id="selectCustomerPriceCountByCode" parameterType="com.hhjx.entity.Page"
+		resultType="java.lang.Long">
+		SELECT count(0) FROM customer_price
+		<where>
+		    description like #{keyWords} '%'
+		</where>
+	</select>
+	
+	<!-- 条件分页查询用户列表 -->
+	<select id="selectCustomerPriceByPage" parameterType="com.hhjx.entity.Page"
+		resultType="CustomerPrice">
+		SELECT c.id,user.name as userName,c.customerName,c.quantity,c.description,c.brand,c.time,c.price,c.offer,c.remark,
+       c.intime from user right join customer_price c on user.id=c.userId
+		<where>
+			<if test="keyWords != null and keyWords != ''">
+				<if test="fuzzy == true">
+					customerName like '%' #{keyWords} '%'
+				</if>
+				<if test="fuzzy == false">
+					customerName = #{keyWords}
+				</if>
+			</if>
+		</where>
+		<if test="order == 1">
+					order by intime desc
+		</if>
+		<if test="order == 0">
+					order by intime asc
+		</if>
+		 LIMIT ${(pageNum-1)*pageSize},#{pageSize}
+	</select>
+	
+	<select id="selectCustomerPriceByPageById" parameterType="com.hhjx.entity.Page"
+		resultType="CustomerPrice">
+		SELECT * FROM customer_price
+		
+		<where>
+		    userId=#{userId}
+			<if test="keyWords != null and keyWords != ''">
+				<if test="fuzzy == true">
+					AND customerName like '%' #{keyWords} '%'
+				</if>
+				<if test="fuzzy == false">
+					AND customerName = #{keyWords}
+				</if>
+			</if>
+		
+		</where>
+		<if test="order == 1">
+					order by intime desc
+		</if>
+		<if test="order == 0">
+					order by intime asc
+		</if>
+		 LIMIT ${(pageNum-1)*pageSize},#{pageSize}
+	</select>
+	
+	<select id="selectCustomerPriceByPageByCode" parameterType="com.hhjx.entity.Page"
+		resultType="CustomerPrice">
+		SELECT c.id,c.customerName,c.description,c.quantity,c.brand,c.time,c.price,c.offer,c.remark,user.name as userName,
+       c.intime from user right join customer_price c on user.id=c.userId
+		<where>
+		    description like #{keyWords} '%'
+		</where>
+	</select>
+	
+	<insert id="insertCustomerPrice" parameterType="com.hhjx.entity.CustomerPrice">
+       INSERT INTO customer_price(userId,customerName,quantity,description,brand,time,price,offer,remark,intime) 
+       values(#{userId},#{customerName},#{quantity},#{description},#{brand},#{time},#{price},#{offer},#{remark},#{intime})
+    </insert>
+    
+    <select id="findCustomerPrice" parameterType="Integer" resultType="CustomerPrice">
+		SELECT * FROM customer_price WHERE id=#{id}
+	</select>
+	
+	<update id="updateCustomerPrice" parameterType="com.hhjx.entity.CustomerPrice">
+		UPDATE customer_price 
+		<trim prefix="set" suffixOverrides=",">
+			<if test="customerName!=null and customerName!=''">customerName=#{customerName},</if>
+			<if test="quantity!=null and quantity!=0">quantity=#{quantity},</if>
+			<if test="description!=null">description=#{description},</if>
+			<if test="brand!=null">brand=#{brand},</if>
+			<if test="time!=null">time=#{time},</if>
+			<if test="price!=null">price=#{price},</if>
+			<if test="offer!=null">offer=#{offer},</if>
+			<if test="remark!=null">remark=#{remark},</if>
+		</trim>
+		where id=#{id}
+	</update>
+	
+  <delete id="deleteCustomerPriceById" parameterType="Integer">
+	    DELETE FROM customer_price WHERE
+		id=#{id}
+	</delete>
+</mapper>

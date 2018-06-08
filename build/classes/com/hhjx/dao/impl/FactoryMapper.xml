@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hhjx.dao.FactoryDao">
+	
+    <!-- 条件分页查询总条数 -->
+	<select id="selectFactoryCount" parameterType="com.hhjx.entity.Page"
+		resultType="java.lang.Long">
+		SELECT count(0) FROM factory_data
+		<where>
+			<if test="keyWords != null and keyWords != ''">
+				<if test="fuzzy == true">
+					name like '%' #{keyWords} '%'
+				</if>
+				<if test="fuzzy == false">
+					name = #{keyWords}
+				</if>
+			</if>
+		</where>
+	</select>
+	
+	<select id="selectFactoryCountById" parameterType="com.hhjx.entity.Page"
+		resultType="java.lang.Long">
+		SELECT count(0) FROM factory_data
+		<where>
+		     userId=#{userId} 
+			<if test="keyWords != null and keyWords != ''">
+				<if test="fuzzy == true">
+					AND name like '%' #{keyWords} '%'
+				</if>
+				<if test="fuzzy == false">
+					AND name = #{keyWords}
+				</if>
+			</if>
+		</where>
+	</select>
+	
+	<!-- 条件分页查询用户列表 -->
+	<select id="selectFactoryByPage" parameterType="com.hhjx.entity.Page"
+		resultType="FactoryData">
+		SELECT c.id,user.name as userName,c.code,c.name,c.type,c.contacts,c.phone,c.telephone,c.extendphone,
+       c.fax,c.email,c.qq,c.wechat,c.product,c.address,c.remark,c.clock,c.intime FROM user right join  factory_data c 
+        on user.id=c.userId
+		<where>
+			<if test="keyWords != null and keyWords != ''">
+				<if test="fuzzy == true">
+					c.name like '%' #{keyWords} '%'
+				</if>
+				<if test="fuzzy == false">
+					c.name = #{keyWords}
+				</if>
+			</if>
+		</where>
+		<if test="order == 1">
+					order by c.intime desc
+		</if>
+		<if test="order == 0">
+					order by c.intime asc
+		</if>
+		<if test="order == 3">
+					order by c.clock desc
+		</if>
+		<if test="order == 4">
+					order by c.clock asc
+		</if>
+		 LIMIT ${(pageNum-1)*pageSize},#{pageSize}
+	</select>
+	
+	<select id="selectFactoryByPageById" parameterType="com.hhjx.entity.Page"
+		resultType="FactoryData">
+		SELECT * FROM factory_data
+		<where>
+		    userId=#{userId} 
+			<if test="keyWords != null and keyWords != ''">
+				<if test="fuzzy == true">
+					AND name like '%' #{keyWords} '%'
+				</if>
+				<if test="fuzzy == false">
+					AND name = #{keyWords}
+				</if>
+			</if>
+			
+		</where>
+		<if test="order == 1">
+					order by intime desc
+		</if>
+		<if test="order == 0">
+					order by intime asc
+		</if>
+		<if test="order == 3">
+					order by clock desc
+		</if>
+		<if test="order == 4">
+					order by clock asc
+		</if>
+		 LIMIT ${(pageNum-1)*pageSize},#{pageSize}
+	</select>
+	
+
+	<select id="selectFactoryByDayById" parameterType="com.hhjx.entity.Page" resultType="FactoryData">
+	select * from factory_data f
+	<where>
+	        f.userId=#{userId} AND TO_DAYS(f.clock)=TO_DAYS(now()) 
+			<if test="keyWords != null and keyWords != ''">
+				<if test="fuzzy == true">
+					AND f.name like '%' #{keyWords} '%'
+				</if>
+				<if test="fuzzy == false">
+					AND f.name = #{keyWords}
+				</if>
+			</if>
+	</where>
+	union 
+	select * from factory_data f1	
+	<where>
+	        f1.userId=#{userId} 
+			<if test="keyWords != null and keyWords != ''">
+				<if test="fuzzy == true">
+					AND f1.name like '%' #{keyWords} '%'
+				</if>
+				<if test="fuzzy == false">
+					AND f1.name = #{keyWords}
+				</if>
+			</if>
+			
+	</where>
+		 LIMIT ${(pageNum-1)*pageSize},#{pageSize}
+	</select>
+	
+	<select id="selectFactoryByDay" parameterType="com.hhjx.entity.Page" resultType="FactoryData">
+	select * from factory_data 
+	where TO_DAYS(clock)=TO_DAYS(now()) 
+	union 
+	select * from(select * from factory_data order by clock desc) t2	
+	<where>
+			<if test="keyWords != null and keyWords != ''">
+				<if test="fuzzy == true">
+					name like '%' #{keyWords} '%'
+				</if>
+				<if test="fuzzy == false">
+					name = #{keyWords}
+				</if>
+			</if>
+			
+	</where>
+		 LIMIT ${(pageNum-1)*pageSize},#{pageSize}
+	</select>
+	
+	<select id="selectFactory" parameterType="Integer" resultType="FactoryData">
+	select * from factory_data
+	where userId = #{id}
+	</select>
+	
+	<select id="aselectFactory" resultType="FactoryData">
+	select * from factory_data
+	</select>
+	
+	<select id="selectFactoryByUserId" parameterType="Integer" resultType="FactoryData">
+	select * from factory_data
+	where userId = #{id}
+	</select>
+	
+	<select id="selectFactoryNoId" resultType="FactoryData">
+	SELECT user.name as userName,factory_data.name,factory_data.clock FROM user,factory_data where factory_data.userId = user.id
+	</select>
+	
+	<select id="selectFactoryName" resultType="FactoryData">
+	SELECT user.name as userName,factory_data.name FROM user,factory_data where factory_data.userId = user.id
+	</select>
+	
+	<select id="selectFactoryIdByName" parameterType="String" resultType = "Integer">
+	select id from factory_data 
+	where name = #{name}
+	</select>
+	
+	<insert id="insertFactory" parameterType="com.hhjx.entity.FactoryData">
+       INSERT INTO factory_data(userId,code,name,type,contacts,phone,telephone,extendphone,
+       fax,email,qq,wechat,product,address,remark,clock,intime) 
+       values(#{userId},#{code},#{name},#{type},#{contacts},#{phone},#{telephone},#{extendphone},#{fax},#{email},#{qq},#{wechat},#{product},#{address},#{remark},#{clock},#{intime})
+    </insert>
+    
+    <select id="findFactory" parameterType="Integer" resultType="FactoryData">
+		SELECT * FROM factory_data WHERE id=#{id}
+	</select>
+	
+	<update id="updateFactory" parameterType="com.hhjx.entity.FactoryData">
+		UPDATE factory_data 
+		<trim prefix="set" suffixOverrides=",">
+			<if test="code!=null">code=#{code},</if>
+			<if test="name!=null">name=#{name},</if>
+			<if test="type!=null">type=#{type},</if>
+			<if test="contacts!=null">contacts=#{contacts},</if>
+			<if test="phone!=null">phone=#{phone},</if>
+			<if test="telephone!=null">telephone=#{telephone},</if>
+			<if test="extendphone!=null">extendphone=#{extendphone},</if>
+			<if test="fax!=null">fax=#{fax},</if>
+			<if test="email!=null">email=#{email},</if>
+			<if test="qq!=null">qq=#{qq},</if>
+			<if test="wechat!=null">wechat=#{wechat},</if>
+			<if test="product!=null">product=#{product},</if>
+			<if test="address!=null">address=#{address},</if>
+			<if test="remark!=null">remark=#{remark},</if>
+			<if test="clock!=null">clock=#{clock}</if>
+		</trim>
+		where id=#{id}
+	</update>
+	
+  <delete id="deleteFactoryById" parameterType="Integer">
+	    DELETE FROM factory_data WHERE
+		id=#{id}
+	</delete>
+</mapper>

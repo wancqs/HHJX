@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+<meta charset="UTF-8">
+<title></title>
+</head>
+
+<body>
+	<!--面包屑导航开始-->
+	<div class="row  border-bottom white-bg dashboard-header">
+		<div class="col-lg-10">
+			<h2>修改密码</h2>
+		</div>
+		<div class="col-lg-2"></div>
+	</div>
+	<!--面包屑导航结束-->
+	<!--列表开始-->
+	<div class="wrapper wrapper-content animated fadeInRight">
+		<div class="row">
+			<div class="col-lg-12">
+				<div class="ibox float-e-margins">
+					<div class="ibox-title">
+						<h5>修改密码</h5>
+					</div>
+					<div class="ibox-content">
+						<div class="input-group pull-left">
+							<a class="btn btn-sm  btn-white" ng-click="goBackTips()"> <i
+								class="fa fa-mail-reply"></i> 返回
+							</a>
+						</div>
+						<div class="input-group pull-left" style="margin-left: 10px;">
+							<a class="btn btn-sm  btn-primary" ng-click="savePwd()"> 确定
+							</a>
+						</div>
+						<div class="clearfix"></div>
+						<div class="hr-line-dashed"></div>
+						<!-- 表单开始 -->
+						<form class="form-horizontal" name="changePwd" novalidate>
+							<div class="form-group">
+								<label class="col-sm-2 control-label">旧密码</label>
+								<div class="col-sm-6">
+									<input type="password" class="form-control" id="password0"
+										ng-model="user.password"
+										ng-change="checkPwd(user.password)" required>
+								</div></br>
+								<p id="ts" style="color:green;display:none">密码输入正确</p>
+							</div>
+							<div class="hr-line-dashed"></div>
+							<div class="form-group">
+								<label class="col-sm-2 control-label">新密码</label>
+								<div class="col-sm-6">
+									<input type="password" class="form-control" id="password1"
+										ng-class="{error:valid && password1.$invalid}"
+										required>
+								</div></br>
+								<p id="ts2" style="color:red;display:none">旧密码错误</p>
+							</div>
+							<div class="hr-line-dashed"></div>
+							<div class="form-group">
+								<label class="col-sm-2 control-label">确认密码</label>
+								<div class="col-sm-6">
+									<input type="password" class="form-control" id="password2"
+										ng-class="{error:valid && password2.$invalid}"
+										required>
+								</div></br>
+								<p id="ts1" style="color:red;display:none">前后密码不一致</p>
+							</div>
+							</div>
+						</form>
+						<!-- 表单结束 -->
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!--列表结束-->
+
+	<div id="goBackTips" class="modal fade" aria-hidden="true"
+		data-backdrop="static">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-body">
+					<div class="row">
+						<h3 class="m-t-none m-b">提示</h3>
+						<h4>确定放弃修改密码吗？</h4>
+						<div class="pull-right">
+							<button class="btn btn-sm btn-default" data-dismiss="modal">
+								<strong>取消</strong>
+							</button>
+							<button class="btn btn-sm btn-primary" data-dismiss="modal"
+							    ng-click="goBack()">
+								<strong>确定</strong>
+							</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+</body>
+
+</html>

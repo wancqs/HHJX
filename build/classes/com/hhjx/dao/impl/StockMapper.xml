@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hhjx.dao.StockDao">
+	
+    <!-- 条件分页查询总条数 -->
+	<select id="selectStockCount" parameterType="com.hhjx.entity.Page"
+		resultType="java.lang.Long">
+		SELECT count(0) FROM stock_list
+		<where>
+			<if test="keyWords != null and keyWords != ''">
+				<if test="fuzzy == true">
+					code like '%' #{keyWords} '%'
+				</if>
+				<if test="fuzzy == false">
+					code = #{keyWords}
+				</if>
+			</if>
+		</where>
+	</select>
+	
+	<select id="selectStockCountById" parameterType="com.hhjx.entity.Page"
+		resultType="java.lang.Long">
+		SELECT count(0) FROM stock_list
+		<where>
+		    userId=#{userId}
+			<if test="keyWords != null and keyWords != ''">
+				<if test="fuzzy == true">
+					AND code like '%' #{keyWords} '%'
+				</if>
+				<if test="fuzzy == false">
+					AND code = #{keyWords}
+				</if>
+			</if>
+		</where>
+	</select>
+	
+	<select id="selectStockCountNoUser" parameterType="com.hhjx.entity.Page"
+		resultType="java.lang.Long">
+		SELECT count(c.intime) FROM stock_list c right join factory_data f on f.name=c.factoryName
+		<where>
+			<if test="keyWords != null and keyWords != ''">
+				<if test="fuzzy == true">
+					AND code like '%' #{keyWords} '%'
+				</if>
+				<if test="fuzzy == false">
+					AND code = #{keyWords}
+				</if>
+			</if>
+		</where>
+	</select>
+	
+	<!-- 条件分页查询用户列表 -->
+	<select id="selectStockByPage" parameterType="com.hhjx.entity.Page"
+		resultType="Stock">
+		SELECT c.id,user.name as userName,c.factoryName,c.code,c.quantity,c.description,c.brand,c.time,c.price,c.remark,
+       c.intime from user right join stock_list c on user.id=c.userId
+		<where>
+			<if test="keyWords != null and keyWords != ''">
+				<if test="fuzzy == true">
+					code like '%' #{keyWords} '%'
+				</if>
+				<if test="fuzzy == false">
+					code = #{keyWords}
+				</if>
+			</if>
+		</where>
+		<if test="order == 1">
+					order by intime desc
+		</if>
+		<if test="order == 0">
+					order by intime asc
+		</if>
+		 LIMIT ${(pageNum-1)*pageSize},#{pageSize}
+	</select>
+	
+	<select id="selectStockByPageNoUser" parameterType="com.hhjx.entity.Page"
+		resultType="Stock">
+		SELECT c.id,factory_data.code as factoryCode,c.factoryName,c.code,c.quantity,c.description,c.brand,c.time,c.price,c.remark,
+       c.intime from factory_data right join stock_list c on factory_data.name=c.factoryName
+		<where>
+			<if test="keyWords != null and keyWords != ''">
+				<if test="fuzzy == true">
+					code like '%' #{keyWords} '%'
+				</if>
+				<if test="fuzzy == false">
+					code = #{keyWords}
+				</if>
+			</if>
+		</where>
+		<if test="order == 1">
+					order by intime desc
+		</if>
+		<if test="order == 0">
+					order by intime asc
+		</if>
+		 LIMIT ${(pageNum-1)*pageSize},#{pageSize}
+	</select>
+	
+	<select id="selectStockByPageById" parameterType="com.hhjx.entity.Page"
+		resultType="Stock">
+		SELECT * FROM stock_list
+		
+		<where>
+		    userId=#{userId}
+			<if test="keyWords != null and keyWords != ''">
+				<if test="fuzzy == true">
+					AND code like '%' #{keyWords} '%'
+				</if>
+				<if test="fuzzy == false">
+					AND code = #{keyWords}
+				</if>
+			</if>
+		
+		</where>
+		<if test="order == 1">
+					order by intime desc
+		</if>
+		<if test="order == 0">
+					order by intime asc
+		</if>
+		 LIMIT ${(pageNum-1)*pageSize},#{pageSize}
+	</select>
+	
+	<insert id="insertStock" parameterType="com.hhjx.entity.Stock">
+       INSERT INTO stock_list(userId,factoryName,code,quantity,description,brand,time,price,remark,intime) 
+       values(#{userId},#{factoryName},#{code},#{quantity},#{description},#{brand},#{time},#{price},#{remark},#{intime})
+    </insert>
+    
+    <select id="findStock" parameterType="Integer" resultType="Stock">
+		SELECT * FROM stock_list WHERE id=#{id}
+	</select>
+	
+	<update id="updateStock" parameterType="com.hhjx.entity.Stock">
+		UPDATE stock_list
+		<trim prefix="set" suffixOverrides=",">
+			<if test="factoryName!=null and factoryName!=''">factoryName=#{factoryName},</if>
+			<if test="code!=null">code=#{code},</if>
+			<if test="quantity!=null and quantity!=0">quantity=#{quantity},</if>
+			<if test="description!=null">description=#{description},</if>
+			<if test="brand!=null">brand=#{brand},</if>
+			<if test="time!=null">time=#{time},</if>
+			<if test="price!=null">price=#{price},</if>
+			<if test="remark!=null">remark=#{remark},</if>
+		</trim>
+		where id=#{id}
+	</update>
+	
+  <delete id="deleteStockById" parameterType="Integer">
+	    DELETE FROM stock_list WHERE
+		id=#{id}
+	</delete>
+</mapper>

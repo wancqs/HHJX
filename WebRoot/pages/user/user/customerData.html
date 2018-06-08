@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>贸易商客户资料管理</title>
+</head>
+
+<body ng-app="indexApp" ng-controller="customerData" class="gray-bg">
+
+	<div class="middle-box text-center loginscreen animated fadeInDown">
+		<div style="margin-top: 0">
+			<h3>贸易商客户资料管理</h3>
+		</div>
+	</div>
+	<!--列表开始-->
+	<div class="wrapper wrapper-content animated fadeInRight">
+		<div class="row well white-bg">
+			<div class="col-lg-12">
+				<div class="ibox float-e-margins">
+					<div class="row">
+						<!-- 搜索框 -->
+						<div class="col-lg-6 col-md-6 col-sm-12 col-xs-12 col-xs-offset-6">
+							<div class="input-group">
+								<input type="text" class="form-control input-sm" name="search"
+									placeholder="输入贸易商名称查找" ng-model="page.keyWords"
+									ng-keyup="searchCustomer($event)">
+								<div class="input-group-btn">
+									<button class="btn btn-sm btn-success" data-toggle="modal"
+										ng-click="searchCustomer()">
+										<span class="fa fa-search"> 搜索</span>
+									</button>
+								</div>
+
+							</div>
+						</div>
+					</div>
+
+					
+					
+					<button title="添加" class="btn btn-success btn-sm"
+						ui-sref="customerAddtion">
+						<span class="glyphicon glyphicon-plus"></span> 添加
+					</button>
+					<button title="批量添加" class="btn btn-success btn-sm"
+						ui-sref="customerBatchAddtion">
+						<span class="glyphicon glyphicon-plus"></span> 批量添加
+					</button>
+					<button title="改变顺序" class="btn btn-primary btn-sm"
+						ng-click="shunxu()">
+						 改变顺序
+					</button>
+					<div class="clearfix"></div>
+
+					<table class="table table-bordered table-hover my-table" 
+					style="word-break:break-all; word-wrap:break-all;table-layout:fixed">
+						<thead>
+							<tr>
+								<th width="50px">序号</th>
+								<th class="col-lg-2 text-center">贸易商名称</th>
+								<th>联系人</th>
+								<th>座机</th>
+								<th>手机</th>
+								<th>邮箱</th>
+								<th>QQ/MSG</th>
+								<th>主营产品</th>
+								<th>地址</th>
+								<th class="col-lg-2 text-center">备注</th>
+								<th width="85px">录入时间</th>
+								<th width="50px">操作</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr ng-repeat="item in customerList.list">
+								<td
+									ng-bind="(customerList.pageNum-1)*customerList.pageSize+$index+1 || 0"></td>
+								<td ng-bind="item.name"></td>
+								<td ng-bind="item.contacts"></td>
+								<td ng-bind="item.telephone"></td>
+								<td ng-bind="item.phone"></td>
+								<td ng-bind="item.email"></td>
+								<td ng-bind="item.qq"></td>
+								<td ng-bind="item.product"></td>
+								<td ng-bind="item.address"></td>
+								<td ng-bind="item.remark"></td>
+								<td ng-bind="item.intime"></td>
+								<td class="text-center">
+									<button title="修改" class="btn btn-primary btn-xs"
+										ng-click="toEditPage(item.id)">
+										修改
+									</button>
+								</td>
+							</tr>
+							<tr ng-show="customerList.list.length==0">
+								<td class="text-center" colspan="12">没有记录</td>
+							</tr>
+						</tbody>
+					</table>
+					<div class="pull-left">
+						共<span ng-bind="customerList.total"></span>条记录 共<span
+							ng-bind="customerList.pages"></span>页
+					</div>
+					<div class="text-right">
+						<button class="btn btn-white btn-sm"
+							ng-click="lastPage(customerList.pageNum-1)">上一页</button>
+						<input type="text" class="form-control page-cout"
+							ng-model="page.pageNum" ng-blur="toPage()"
+							ng-keyup="toPage($event)" />
+						<button class="btn btn-white btn-sm"
+							ng-click="nextPage(customerList.pageNum+1)">下一页</button>
+					</div>
+
+				</div>
+
+			
+
+	</div>
+
+	<!--列表结束-->
+
+
+</body>
+</html>
